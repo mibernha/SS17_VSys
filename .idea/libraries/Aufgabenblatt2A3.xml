@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Aufgabenblatt2A3">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/Aufgabenblatt2A3" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/Aufgabenblatt2A3/rm.requestResponse.javadoc" />
+    </JAVADOC>
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/Aufgabenblatt2A3" recursive="false" />
+  </library>
+</component>
