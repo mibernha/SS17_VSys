@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class PrimeServer {
 	private final static int PORT=1234;
-	private final static Logger LOGGER=Logger.getLogger(PrimeServer.class.getName());
+//	private final static Logger LOGGER=Logger.getLogger(PrimeServer.class.getName());
 	
 	private Component communication;
 	private int port=PORT;
@@ -29,35 +29,34 @@ public class PrimeServer {
 		return true;
     }
     
-	void setLogLevel(Level level) {
-    	for(Handler h : LOGGER.getLogger("").getHandlers())	h.setLevel(level); 
-    	LOGGER.setLevel(level);
-    	LOGGER.info("Log level set to "+level);
-    }
+//	void setLogLevel(Level level) {
+//    	for(Handler h : LOGGER.getLogger("").getHandlers())	h.setLevel(level);
+//    	LOGGER.setLevel(level);
+//    	LOGGER.info("Log level set to "+level);
+//    }
 
     void listen() {
-    	LOGGER.info("Listening on port "+port);
+//    	LOGGER.info("Listening on port "+port);
     	
     	while (true) {
     		Long request=null;
 
-    		LOGGER.finer("Receiving ...");
+//    		LOGGER.finer("Receiving ...");
     		try {
     			request = (Long) communication.receive(port, true, false).getContent();
     			System.out.println(request);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
-    		LOGGER.fine(request.toString()+" received.");
-
-    		LOGGER.finer("Sending ...");
+//    		LOGGER.fine(request.toString()+" received.");
+//    		LOGGER.finer("Sending ...");
 		    try {
 		    	communication.send(new Message("localhost",port,
 		    			new Boolean(primeService(request.longValue()))),true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		    LOGGER.fine("message sent.");
+//		    LOGGER.fine("message sent.");
     	}
     }
 
@@ -70,13 +69,13 @@ public class PrimeServer {
 					try {
 				        port = Integer.parseInt(args[++i]);
 				    } catch (NumberFormatException e) {
-				    	LOGGER.severe("port must be an integer, not "+args[i]);
+//				    	LOGGER.severe("port must be an integer, not "+args[i]);
 				        System.exit(1);
 				    }
 					break;
 				default:
-					LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
-			}           
+//				LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
+			}
         }
     	
     	new PrimeServer(port).listen();

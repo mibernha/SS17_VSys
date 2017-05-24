@@ -26,22 +26,27 @@ public class MySocketServerConnection extends Thread {
 		try {
 			boolean error = false;
 			String in;
-			String path = "C:\\Users\\Micha\\SoTe2\\ReKo_Uebung02\\src\\Aufgabe3";
+			String path = "C:\\Users\\Micha\\Desktop\\HTWG\\6. Semester\\Verteilte Systeme\\Übungen\\vsys_aufgabenblatt_02-aufgabe_01";
 			String url;
+			Boolean validURL = false;
 			output.println("HTTP/1.1 200 OK");
 			output.println("Content-Type: text/html");
 			output.println("");
 			
 			in = input.readLine();
 			url = in.substring(4,in.length()-9);
+
+//			if(url.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
+			if(url.matches("[-a-zA-Z0-9+&@#/%?=~|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
+					validURL = true;
+			}
 			
-			if(url.equals("/users/test")){
-				path += url + ".html";
-			} else if(url.equals("/test")){
+			if(url.equals("/test")){
 				path += url + ".html";
 			} else {
 				error = true;
 			}
+
 			if(!error) {
 				filereader = new BufferedReader(new FileReader(path));
 				String line;
@@ -49,12 +54,17 @@ public class MySocketServerConnection extends Thread {
 					output.println(line);
 				}
 				filereader.close();
+			} else if(!validURL) {
+				output.println("<h1>Error 400: Bad Request</h1>");
+				output.println("<p>Hier könnte Ihre Werbung stehen!</p>");
+				serverlog.println("Error 400 - Bad Request.");
 			} else {
 				output.println("<h1>Error 404: Page with url " + url + " not found!</h1>");
-				output.println("<p>Hier k�nnte Ihre Werbung stehen!</p>");
+				output.println("<p>Hier könnte Ihre Werbung stehen!</p>");
 				serverlog.println("Error 404 - Seite konnte nicht gefunden werden.");
+				output.println();
 			}
-			serverlog.println("Page on url " + path +  "printed.");
+			serverlog.println("Page on url " + path +  " printed.");
 		}
 		catch(Exception e) {
 			serverlog.println("Error: " + e.getMessage());

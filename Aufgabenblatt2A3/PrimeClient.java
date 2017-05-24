@@ -16,17 +16,15 @@ public class PrimeClient extends Thread {
     private static final long INITIAL_VALUE = (long) 1e17;
     private static final long COUNT = 20;
     private static final String CLIENT_NAME = PrimeClient.class.getName();
-    private static final String REQUEST_MODE = "SYNCHRONIZED";
 
     private Component communication;
-    String hostname, requestMode;
+    String hostname;
     int port;
     long initialValue, count;
 
-    public PrimeClient(String hostname, int port, String requestMode, long initialValue, long count) {
+    public PrimeClient(String hostname, int port, long initialValue, long count) {
         this.hostname = hostname;
         this.port = port;
-        this.requestMode = requestMode;
         this.initialValue = initialValue;
         this.count = count;
     }
@@ -51,36 +49,25 @@ public class PrimeClient extends Thread {
 
     public void processNumber(long value) throws IOException, ClassNotFoundException {
 
-        Boolean blocking = true;
+        Boolean blocking = false;
         Boolean isNull = false;
-        String points = "";
-
-        if (requestMode.equals("NOT")) {
-            blocking = false;
-        }
 
         communication.send(new Message(hostname, port, new Long(value)), false);
-        System.out.print(value + ": ");
+        System.out.println(value + ": ");
 
         do {
-
             try {
                 Boolean isPrime = (Boolean) communication.receive(port, blocking, true).getContent();
+                System.out.print(Thread.currentThread().getName());
                 System.out.println((isPrime.booleanValue() ? " prime" : " not prime"));
-                System.out.println(Thread.currentThread().getName());
-
                 isNull = false;
             } catch (NullPointerException e) {
-
-                try {
-                    Thread.sleep(1000);
-                    isNull = true;
-                    points = points + ".";
-                    System.out.print(points);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-
+               try {
+                   Thread.sleep(500);
+                   System.out.print(".");
+               } catch (InterruptedException ex) {
+                   ex.printStackTrace();
+               }
             }
         } while (isNull);
     }
@@ -88,7 +75,6 @@ public class PrimeClient extends Thread {
     public static void main(String args[]) throws IOException, ClassNotFoundException {
         String hostname = HOSTNAME;
         int port = PORT;
-        String requestMode = REQUEST_MODE;
         long initialValue = INITIAL_VALUE;
         long count = COUNT;
 
@@ -108,10 +94,6 @@ public class PrimeClient extends Thread {
             input = reader.readLine();
             if (!input.equals("")) port = Integer.parseInt(input);
 
-            System.out.print("Request mode [" + requestMode + "] > ");
-            input = reader.readLine();
-            if (!input.equals("")) requestMode = input;
-
             System.out.print("Prime search initial value [" + initialValue + "] > ");
             input = reader.readLine();
             if (!input.equals("")) initialValue = Integer.parseInt(input);
@@ -120,34 +102,28 @@ public class PrimeClient extends Thread {
             input = reader.readLine();
             if (!input.equals("")) count = Integer.parseInt(input);
 
-            if (requestMode.equals("SYNCHRONIZED")) {
-                System.out.println("-----> SYNCHRONIZED <-----");
-
-                int threads = Runtime.getRuntime().availableProcessors();
-                System.out.println("availableProcessors: " + threads);
-                ExecutorService service = Executors.newFixedThreadPool(threads);
-                for (int i = 0; i < count; i++) {
-                    service.execute(new PrimeClient(hostname, port, requestMode, initialValue, count));
-                }
-
-                service.shutdown();
-                try {
-                    service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-                } catch (InterruptedException e) {
-                    System.err.println(e);
-                }
-
-            } else {
-                new PrimeClient(hostname, port, requestMode, initialValue, count).run();
+            int threads = Runtime.getRuntime().availableProcessors();
+            System.out.println("availableProcessors: " + threads);
+            ExecutorService service = Executors.newFixedThreadPool(threads);
+            for (int i = 0; i < count; i++) {
+                service.execute(new PrimeClient(hostname, port, initialValue, count));
             }
 
-            System.out.println("Exit [n]> ");
-            input = reader.readLine();
-            if (input.equals("y") || input.equals("j")) doExit = true;
+            service.shutdown();
+            try {
+                service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                System.err.println(e);
+            }
         }
 
+        System.out.println("Exit [n]> ");
+        input = reader.readLine();
+        if (input.equals("y") || input.equals("j")) doExit = true;
     }
+
 }
+
 
 
 
