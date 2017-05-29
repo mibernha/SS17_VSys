@@ -2,9 +2,6 @@ package Aufgabenblatt2A3;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 
 import rm.requestResponse.*;
@@ -46,9 +43,8 @@ public class PrimeClient extends Thread {
 
         Boolean blocking = false;
         Boolean isNull = false;
-        String points = "";
 
-        communication.send(new Message(hostname, port, new Long(value)), port,true);
+        communication.send(new Message(hostname, port, new Long(value)), port, true);
 
         System.out.print(CLIENT_NAME + " " + value + " ");
 

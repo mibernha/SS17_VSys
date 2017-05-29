@@ -52,7 +52,6 @@ public class PrimeServer extends Thread {
     		LOGGER.fine(request.toString()+" received.");
 
     		LOGGER.finer("Sending ...");
-
     		try {
 		    	communication.send(new Message("localhost", port,
 		    			new Boolean(primeService(request.longValue()))), port,true);
@@ -79,6 +78,6 @@ public class PrimeServer extends Thread {
 					LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
 			}
         }
-    	new PrimeServer(port).listen();
+    	new PrimeServer(port).run();
     }
 }
