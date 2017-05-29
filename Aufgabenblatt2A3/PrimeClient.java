@@ -1,8 +1,4 @@
 package Aufgabenblatt2A3;
-
-import rm.requestResponse.Component;
-import rm.requestResponse.Message;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,16 +6,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+
+import rm.requestResponse.*;
+
 public class PrimeClient extends Thread {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 1234;
     private static final long INITIAL_VALUE = (long) 1e17;
     private static final long COUNT = 20;
     private static final String CLIENT_NAME = PrimeClient.class.getName();
+    private static final int CLIENTS = 10;
 
     private Component communication;
     String hostname;
-    int port;
+    int port, clients;
     long initialValue, count;
 
     public PrimeClient(String hostname, int port, long initialValue, long count) {
@@ -30,20 +30,15 @@ public class PrimeClient extends Thread {
     }
 
     public void run() {
-
-        try {
-            executeProcessNumber();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            //System.err.println(e);
-        }
-    }
-
-    public void executeProcessNumber() throws ClassNotFoundException, IOException {
         communication = new Component();
         for (long i = initialValue; i < initialValue + count; i++) {
-            processNumber(i);
+            try {
+                processNumber(i);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -51,25 +46,31 @@ public class PrimeClient extends Thread {
 
         Boolean blocking = false;
         Boolean isNull = false;
+        String points = "";
 
-        communication.send(new Message(hostname, port, new Long(value)), false);
-        System.out.println(value + ": ");
+        communication.send(new Message(hostname, port, new Long(value)), port,true);
 
+        System.out.print(CLIENT_NAME + " " + value + " ");
+
+        //TODO An dieser Stelle neuen Port festlegen und Kommunikation dann darüber
         do {
             try {
+//                System.out.println(communication.receive(1234,blocking,true).getContent());
                 Boolean isPrime = (Boolean) communication.receive(port, blocking, true).getContent();
-                System.out.print(Thread.currentThread().getName());
-                System.out.println((isPrime.booleanValue() ? " prime" : " not prime"));
+                System.out.print((isPrime.booleanValue() ? " prime" : " not prime"));
                 isNull = false;
             } catch (NullPointerException e) {
-               try {
-                   Thread.sleep(500);
-                   System.out.print(".");
-               } catch (InterruptedException ex) {
-                   ex.printStackTrace();
-               }
+                try {
+                    Thread.sleep(1000);
+                    isNull = true;
+                    System.out.print(".");
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+
             }
         } while (isNull);
+        System.out.println();
     }
 
     public static void main(String args[]) throws IOException, ClassNotFoundException {
@@ -77,6 +78,7 @@ public class PrimeClient extends Thread {
         int port = PORT;
         long initialValue = INITIAL_VALUE;
         long count = COUNT;
+        int clients = CLIENTS;
 
         boolean doExit = false;
 
@@ -86,44 +88,38 @@ public class PrimeClient extends Thread {
         System.out.println("Welcome to " + CLIENT_NAME + "\n");
 
         while (!doExit) {
-            System.out.print("Server hostname [" + hostname + "] > ");
+//            System.out.print("Server hostname [" + hostname + "] > ");
+//            input = reader.readLine();
+//            if (!input.equals("")) hostname = input;
+
+//            System.out.print("Server port [" + port + "] > ");
+//            input = reader.readLine();
+//            if (!input.equals("")) port = Integer.parseInt(input);
+
+//            System.out.print("Prime search initial value [" + initialValue + "] > ");
+//            input = reader.readLine();
+//            if (!input.equals("")) initialValue = Integer.parseInt(input);
+
+//            System.out.print("Prime search count [" + count + "] > ");
+//            input = reader.readLine();
+//            if (!input.equals("")) count = Integer.parseInt(input);
+
+//            System.out.print("Number of Clients: [" + clients + "] > ");
+//            input = reader.readLine();
+//            if (!input.equals("")) clients = Integer.parseInt(input);
+
+//            for(int i = 0; i < clients; i++) {
+//                new PrimeClient(hostname, port, initialValue, count).start();
+//            }
+            new PrimeClient(hostname, port, initialValue, count).start();
+
+            System.out.println("Exit [n]> ");
             input = reader.readLine();
-            if (!input.equals("")) hostname = input;
-
-            System.out.print("Server port [" + port + "] > ");
-            input = reader.readLine();
-            if (!input.equals("")) port = Integer.parseInt(input);
-
-            System.out.print("Prime search initial value [" + initialValue + "] > ");
-            input = reader.readLine();
-            if (!input.equals("")) initialValue = Integer.parseInt(input);
-
-            System.out.print("Prime search count [" + count + "] > ");
-            input = reader.readLine();
-            if (!input.equals("")) count = Integer.parseInt(input);
-
-            int threads = Runtime.getRuntime().availableProcessors();
-            System.out.println("availableProcessors: " + threads);
-            ExecutorService service = Executors.newFixedThreadPool(threads);
-            for (int i = 0; i < count; i++) {
-                service.execute(new PrimeClient(hostname, port, initialValue, count));
-            }
-
-            service.shutdown();
-            try {
-                service.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
+            if (input.equals("y") || input.equals("j")) doExit = true;
         }
 
-        System.out.println("Exit [n]> ");
-        input = reader.readLine();
-        if (input.equals("y") || input.equals("j")) doExit = true;
     }
-
 }
-
 
 
 
