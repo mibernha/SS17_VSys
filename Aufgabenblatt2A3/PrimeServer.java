@@ -1,5 +1,9 @@
 package Aufgabenblatt2A3;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.*;
 
 import rm.requestResponse.*;
@@ -7,22 +11,20 @@ import rm.requestResponse.*;
 public class PrimeServer extends Thread {
 	private final static int PORT=1234;
 	private final static Logger LOGGER=Logger.getLogger(PrimeServer.class.getName());
+    private static Boolean fixedThreadPool = true;
 
 	private Component communication;
-	private int port=PORT;
+	private int port = PORT;
+	private ThreadCounter counter;
+	private ExecutorService exec;
 
-    PrimeServer(int port) {
-    	communication=new Component();
+    public PrimeServer(int port, Boolean fixed) {
+        counter = new ThreadCounter();
+        counter.start();
+    	communication = new Component();
+    	fixedThreadPool = fixed;
     	if(port>0) this.port=port;
-
 //    	setLogLevel(Level.FINER);
-    }
-
-    private boolean primeService(long number) {
-		for (long i = 2; i < Math.sqrt(number)+1; i++) {
-		    if (number % i == 0) return false;
-		}
-		return true;
     }
 
     public void run() {
@@ -44,21 +46,21 @@ public class PrimeServer extends Thread {
 
     		LOGGER.finer("Receiving ...");
     		try {
-    			request = (Long) communication.receive(port, true, false).getContent();
-    			System.out.println(port + ": " + request);
+    		    request = (Long) communication.receive(port, true, true).getContent();
+    			System.out.println("ACTIVE THREADS: " + counter.getCounter() + ": " + request);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
     		LOGGER.fine(request.toString()+" received.");
 
     		LOGGER.finer("Sending ...");
-    		try {
-		    	communication.send(new Message("localhost", port,
-		    			new Boolean(primeService(request.longValue()))), port,true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		    LOGGER.fine("message sent.");
+    		if(fixedThreadPool) {
+    		    exec = Executors.newFixedThreadPool(10);
+            } else {
+    		    exec = Executors.newCachedThreadPool();
+            }
+            PrimeService ps = new PrimeService(request.longValue(), port, communication);
+    		exec.execute(ps);
     	}
     }
 
@@ -78,6 +80,19 @@ public class PrimeServer extends Thread {
 					LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
 			}
         }
-    	new PrimeServer(port).run();
+        String input = "";
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("FixedThreadPool [true] > ");
+        try {
+            input = reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!input.equals("")) {
+            if(!input.equals("true")) {
+                fixedThreadPool = false;
+            }
+        }
+    	new PrimeServer(port, fixedThreadPool).run();
     }
 }

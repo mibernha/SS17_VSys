@@ -9,14 +9,13 @@ import rm.requestResponse.*;
 public class PrimeClient extends Thread {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 1234;
-    private static final long INITIAL_VALUE = (long) 1e17;
-    private static final long COUNT = 20;
+    private static final long INITIAL_VALUE = (long) 1e10; //1e17
+    private static final long COUNT = 200;
     private static final String CLIENT_NAME = PrimeClient.class.getName();
-    private static final int CLIENTS = 10;
 
     private Component communication;
     String hostname;
-    int port, clients;
+    int port;
     long initialValue, count;
 
     public PrimeClient(String hostname, int port, long initialValue, long count) {
@@ -33,8 +32,8 @@ public class PrimeClient extends Thread {
                 processNumber(i);
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -48,10 +47,8 @@ public class PrimeClient extends Thread {
 
         System.out.print(CLIENT_NAME + " " + value + " ");
 
-        //TODO An dieser Stelle neuen Port festlegen und Kommunikation dann darüber
         do {
             try {
-//                System.out.println(communication.receive(1234,blocking,true).getContent());
                 Boolean isPrime = (Boolean) communication.receive(port, blocking, true).getContent();
                 System.out.print((isPrime.booleanValue() ? " prime" : " not prime"));
                 isNull = false;
@@ -74,7 +71,6 @@ public class PrimeClient extends Thread {
         int port = PORT;
         long initialValue = INITIAL_VALUE;
         long count = COUNT;
-        int clients = CLIENTS;
 
         boolean doExit = false;
 
@@ -100,13 +96,6 @@ public class PrimeClient extends Thread {
 //            input = reader.readLine();
 //            if (!input.equals("")) count = Integer.parseInt(input);
 
-//            System.out.print("Number of Clients: [" + clients + "] > ");
-//            input = reader.readLine();
-//            if (!input.equals("")) clients = Integer.parseInt(input);
-
-//            for(int i = 0; i < clients; i++) {
-//                new PrimeClient(hostname, port, initialValue, count).start();
-//            }
             new PrimeClient(hostname, port, initialValue, count).start();
 
             System.out.println("Exit [n]> ");
