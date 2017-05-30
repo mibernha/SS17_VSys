@@ -22,14 +22,16 @@ public class PrimeService extends Thread {
     }
 
     public void run() {
-        counter.increment();
         isPrime = primeService();
         try {
             communication.send(new Message("localhost", port, isPrime), port, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        counter.decrement();
+        synchronized (PrimeServer.obj) {
+            PrimeServer.obj.notify();
+            PrimeServer.counter.decrement();
+        }
     }
 
     public boolean primeService() {

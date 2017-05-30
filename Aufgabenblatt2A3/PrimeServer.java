@@ -15,11 +15,13 @@ public class PrimeServer extends Thread {
 
 	private Component communication;
 	private int port = PORT;
-	private ThreadCounter counter;
+	protected static ThreadCounter counter;
 	private ExecutorService exec;
+	protected static Object obj;
 
     public PrimeServer(int port, Boolean fixed) {
-        counter = new ThreadCounter();
+    	obj = new Object();
+        counter = new ThreadCounter(obj);
         counter.start();
     	communication = new Component();
     	fixedThreadPool = fixed;
@@ -50,6 +52,11 @@ public class PrimeServer extends Thread {
     			System.out.println("ACTIVE THREADS: " + counter.getCounter() + ": " + request);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
+			}
+
+			synchronized (obj) {
+    			obj.notify();
+    			counter.increment();
 			}
     		LOGGER.fine(request.toString()+" received.");
 

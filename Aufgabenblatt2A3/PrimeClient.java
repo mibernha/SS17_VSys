@@ -9,8 +9,8 @@ import rm.requestResponse.*;
 public class PrimeClient extends Thread {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 1234;
-    private static final long INITIAL_VALUE = (long) 1e10; //1e17
-    private static final long COUNT = 200;
+    private static final long INITIAL_VALUE = (long) 1e17; //1e17
+    private static final long COUNT = 50;
     private static final String CLIENT_NAME = PrimeClient.class.getName();
 
     private Component communication;
