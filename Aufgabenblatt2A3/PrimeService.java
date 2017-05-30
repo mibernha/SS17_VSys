@@ -18,7 +18,6 @@ public class PrimeService extends Thread {
         this.number = number;
         this.port = port;
         this.communication = communication;
-        counter = new ThreadCounter();
     }
 
     public void run() {

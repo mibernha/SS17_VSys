@@ -49,7 +49,7 @@ public class PrimeServer extends Thread {
     		LOGGER.finer("Receiving ...");
     		try {
     		    request = (Long) communication.receive(port, true, true).getContent();
-    			System.out.println("ACTIVE THREADS: " + counter.getCounter() + ": " + request);
+    			System.out.println("Request: " + request);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}
