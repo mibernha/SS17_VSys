@@ -15,6 +15,7 @@ public class PrimeServer extends Thread {
 
 	private Component communication;
 	private int port = PORT;
+	private int sendPort;
 	protected static ThreadCounter counter;
 	private ExecutorService exec;
 	protected static Object obj;
@@ -48,7 +49,9 @@ public class PrimeServer extends Thread {
 
     		LOGGER.finer("Receiving ...");
     		try {
-    		    request = (Long) communication.receive(port, true, true).getContent();
+    		    Message msg = communication.receive(port, true, true);
+    		    request = (Long) msg.getContent();
+    		    sendPort = msg.getPort();
     			System.out.println("Request: " + request);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
@@ -66,7 +69,7 @@ public class PrimeServer extends Thread {
             } else {
     		    exec = Executors.newCachedThreadPool();
             }
-            PrimeService ps = new PrimeService(request.longValue(), port, communication);
+            PrimeService ps = new PrimeService(request, sendPort);
     		exec.execute(ps);
     	}
     }

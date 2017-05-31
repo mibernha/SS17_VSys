@@ -10,20 +10,21 @@ import java.io.IOException;
 public class PrimeService extends Thread {
     private long number;
     private Component communication;
-    private int port;
+    private int sendPort;
+    private int port = 1234;
     private Boolean isPrime;
     private ThreadCounter counter;
 
-    public PrimeService(long number, int port, Component communication){
+    public PrimeService(long number, int sendPort){
         this.number = number;
-        this.port = port;
-        this.communication = communication;
+        this.sendPort = sendPort;
     }
 
     public void run() {
         isPrime = primeService();
         try {
-            communication.send(new Message("localhost", port, isPrime), port, true);
+            Component comm = new Component();
+            comm.send(new Message("localhost", 4321, isPrime), sendPort, true);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package Aufgabenblatt2A3;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 
 import rm.requestResponse.*;
@@ -12,6 +13,7 @@ public class PrimeClient extends Thread {
     private static final long INITIAL_VALUE = (long) 1e17; //1e17
     private static final long COUNT = 50;
     private static final String CLIENT_NAME = PrimeClient.class.getName();
+    private static int sendPort = (int) (Math.random()*1000+1);
 
     private Component communication;
     String hostname;
@@ -43,13 +45,13 @@ public class PrimeClient extends Thread {
         Boolean blocking = false;
         Boolean isNull = false;
 
-        communication.send(new Message(hostname, port, new Long(value)), port, true);
+        communication.send(new Message(hostname, sendPort, new Long(value)), port, true);
 
         System.out.print(CLIENT_NAME + " " + value + " ");
 
         do {
             try {
-                Boolean isPrime = (Boolean) communication.receive(port, blocking, true).getContent();
+                Boolean isPrime = (Boolean) communication.receive(sendPort, blocking, true).getContent();
                 System.out.print((isPrime.booleanValue() ? " prime" : " not prime"));
                 isNull = false;
             } catch (NullPointerException e) {
@@ -76,7 +78,6 @@ public class PrimeClient extends Thread {
 
         String input;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
         System.out.println("Welcome to " + CLIENT_NAME + "\n");
 
         while (!doExit) {
