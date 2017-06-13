@@ -12,6 +12,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@SuppressWarnings("Duplicates")
 public class PrimeServer extends Thread {
 	private final static int PORT = 1234;
 	private final static Logger LOGGER = Logger.getLogger(PrimeServer.class.getName());
@@ -82,20 +83,20 @@ public class PrimeServer extends Thread {
 
     public static void main(String[] args) {
     	int port = PORT;
-    	for (int i = 0; i<args.length; i++)  {
-			switch(args[i]) {
-				case "-port":
-					try {
-				        port = Integer.parseInt(args[++i]);
-				    } catch (NumberFormatException e) {
-				    	LOGGER.severe("port must be an integer, not "+args[i]);
-				        System.exit(1);
-				    }
-					break;
-				default:
-					LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
-			}
-        }
+//    	for (int i = 0; i<args.length; i++)  {
+//			switch(args[i]) {
+//				case "-port":
+//					try {
+//				        port = Integer.parseInt(args[++i]);
+//				    } catch (NumberFormatException e) {
+//				    	LOGGER.severe("port must be an integer, not "+args[i]);
+//				        System.exit(1);
+//				    }
+//					break;
+//				default:
+//					LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
+//			}
+//        }
         String input = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("FixedThreadPool [true] > ");

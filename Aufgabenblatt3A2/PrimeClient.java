@@ -6,7 +6,7 @@ import rm.requestResponse.Message;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+@SuppressWarnings("Duplicates")
 public class PrimeClient extends Thread {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 1234;

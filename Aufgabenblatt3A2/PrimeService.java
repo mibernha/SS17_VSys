@@ -8,6 +8,7 @@ import java.io.IOException;
 /**
  * Created by Micha on 29.05.2017.
  */
+@SuppressWarnings("Duplicates")
 public class PrimeService extends Thread {
     private long number;
     private int sendPort;
