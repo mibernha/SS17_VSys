@@ -13,7 +13,7 @@ public class PrimeClient extends Thread {
     private static final long INITIAL_VALUE = (long) 1e17; //1e17
     private static final long COUNT = 50;
     private static final String CLIENT_NAME = PrimeClient.class.getName();
-    private static int sendPort = (int) (Math.random()*1000+1);
+    private static int sendPort = (int) (Math.random()*1000+3000);
 
     private Component communication;
     String hostname;

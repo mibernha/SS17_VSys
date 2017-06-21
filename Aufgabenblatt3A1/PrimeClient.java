@@ -6,7 +6,7 @@ import rm.requestResponse.Message;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+@SuppressWarnings("Duplicates")
 public class PrimeClient extends Thread {
     private static final String HOSTNAME = "localhost";
     private static final int PORT = 1234;
@@ -65,7 +65,7 @@ public class PrimeClient extends Thread {
                 long procTime = (Long) obj[1];
                 long waitTime = (Long) obj[2];
                 long commTimeEnd = System.currentTimeMillis();
-                long commTime = (commTimeEnd - commTimeStart);
+                long commTime = (commTimeEnd - commTimeStart) - waitTime - procTime;
                 procTimeMed += procTime;
                 waitTimeMed += waitTime;
                 commTimeMed += commTime;

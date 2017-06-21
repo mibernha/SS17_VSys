@@ -2,6 +2,7 @@
   <library name="rm.requestResponse_v12">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/Aufgabenblatt2A3/rm.requestResponse_v12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Aufgabenblatt3A2/rm.serverAdmin.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
