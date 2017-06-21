@@ -3,7 +3,6 @@ package Aufgabenblatt3A2;
 /**
  * Created by MB_SP on 29.05.2017.
  */
-@SuppressWarnings("Duplicates")
 public class ThreadCounter extends Thread {
 
     private int counter = 0;

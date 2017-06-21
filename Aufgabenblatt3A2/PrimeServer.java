@@ -1,21 +1,17 @@
 package Aufgabenblatt3A2;
 
-import rm.requestResponse.Component;
-import rm.requestResponse.Message;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
-@SuppressWarnings("Duplicates")
+import rm.requestResponse.*;
+
 public class PrimeServer extends Thread {
-	private final static int PORT = 1234;
-	private final static Logger LOGGER = Logger.getLogger(PrimeServer.class.getName());
+	private final static int PORT=1234;
+	private final static Logger LOGGER=Logger.getLogger(PrimeServer.class.getName());
     private static Boolean fixedThreadPool = true;
 
 	private Component communication;
@@ -24,7 +20,6 @@ public class PrimeServer extends Thread {
 	protected static ThreadCounter counter;
 	private ExecutorService exec;
 	protected static Object obj;
-	long waitTimeStart;
 
     public PrimeServer(int port, Boolean fixed) {
     	obj = new Object();
@@ -56,7 +51,6 @@ public class PrimeServer extends Thread {
     		LOGGER.finer("Receiving ...");
     		try {
     		    Message msg = communication.receive(port, true, true);
-    		    waitTimeStart = System.currentTimeMillis();
     		    request = (Long) msg.getContent();
     		    sendPort = msg.getPort();
     			System.out.println("Request: " + request);
@@ -76,30 +70,30 @@ public class PrimeServer extends Thread {
             } else {
     		    exec = Executors.newCachedThreadPool();
             }
-            PrimeService ps = new PrimeService(request, sendPort, waitTimeStart);
+            PrimeService ps = new PrimeService(request, sendPort);
     		exec.execute(ps);
     	}
     }
 
     public static void main(String[] args) {
-    	int port = PORT;
-//    	for (int i = 0; i<args.length; i++)  {
-//			switch(args[i]) {
-//				case "-port":
-//					try {
-//				        port = Integer.parseInt(args[++i]);
-//				    } catch (NumberFormatException e) {
-//				    	LOGGER.severe("port must be an integer, not "+args[i]);
-//				        System.exit(1);
-//				    }
-//					break;
-//				default:
-//					LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
-//			}
-//        }
+    	int port=PORT;
+    	for (int i = 0; i<args.length; i++)  {
+			switch(args[i]) {
+				case "-port":
+					try {
+				        port = Integer.parseInt(args[++i]);
+				    } catch (NumberFormatException e) {
+				    	LOGGER.severe("port must be an integer, not "+args[i]);
+				        System.exit(1);
+				    }
+					break;
+				default:
+					LOGGER.warning("Wrong parameter passed ... '"+args[i]+"'");
+			}
+        }
         String input = "";
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("FixedThreadPool [true] > ");
+        System.out.print("FixedThreadPool [true] > "); 
         try {
             input = reader.readLine();
         } catch (IOException e) {
@@ -110,16 +104,16 @@ public class PrimeServer extends Thread {
                 fixedThreadPool = false;
             }
         }
-        System.out.print("Port [" + port + "] > ");
-        String portString = "";
+        
+        System.out.print("Port [" + port + "] > "); 
         try {
-            portString = reader.readLine();
+            input = reader.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (!portString.equals("")) {
-            port = Integer.parseInt(portString);
+        if (!input.equals("")) {
+           port = new Integer(input);
         }
-    	new PrimeServer(port, fixedThreadPool).run();
+    	new PrimeServer(port, fixedThreadPool).start();
     }
 }

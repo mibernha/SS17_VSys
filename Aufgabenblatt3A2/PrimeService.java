@@ -1,38 +1,36 @@
 package Aufgabenblatt3A2;
 
-import rm.requestResponse.Component;
-import rm.requestResponse.Message;
+import rm.requestResponse.*;
 
 import java.io.IOException;
 
 /**
  * Created by Micha on 29.05.2017.
  */
-@SuppressWarnings("Duplicates")
 public class PrimeService extends Thread {
     private long number;
+    private Component communication;
     private int sendPort;
+    private int port = 1234;
     private Boolean isPrime;
     private ThreadCounter counter;
-    long waitTimeStart, procTimeStart, procTimeEnd;
+    private long processingTime;
+    private long waitingTime;
+    private long communicationTime;
 
-    public PrimeService(long number, int sendPort, long waitTimeStart){
+    public PrimeService(long number, int sendPort){
         this.number = number;
         this.sendPort = sendPort;
-        this.waitTimeStart = waitTimeStart;
+        this.processingTime = 0;
+        this.waitingTime = 0;
+        this.communicationTime = 0;
     }
 
     public void run() {
-        Long waitTimeEnd = System.currentTimeMillis();
         isPrime = primeService();
         try {
             Component comm = new Component();
-            Object arr[] = new Object[3];
-            arr[0] = isPrime;
-            arr[1] = (procTimeEnd - procTimeStart);
-            arr[2] = (waitTimeEnd - waitTimeStart);
-            comm.send(new Message("localhost", 4321, arr), sendPort, true);
-//            comm.send(new Message("localhost", 4321, isPrime), sendPort, true);
+            comm.send(new Message("localhost", 4321, isPrime), sendPort, true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,14 +41,12 @@ public class PrimeService extends Thread {
     }
 
     public boolean primeService() {
-        procTimeStart = System.currentTimeMillis();
         for (long i = 2; i < Math.sqrt(number)+1; i++) {
+//            System.out.println(Thread.currentThread().getName() + " : " + i);
             if (number % i == 0) {
-                procTimeEnd = System.currentTimeMillis();
                 return false;
             }
         }
-        procTimeEnd = System.currentTimeMillis();
         return true;
     }
 }
