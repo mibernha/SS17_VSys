@@ -5,7 +5,6 @@ import java.io.IOException;
 import rm.requestResponse.Component;
 import rm.requestResponse.Message;
 import rm.serverAdmin.ServerConfig;
-import rm.serverAdmin.*;
 
 public class LoadBalancer extends Thread{
 	public static ServerAdmin serverAdmin;
@@ -42,11 +41,11 @@ public class LoadBalancer extends Thread{
 
     public static void main(String[] args) {
         System.out.println("This Balancer listens on port [" + PORT + "]");
-        try {
+        //try {
         	serverAdmin = new ServerAdmin("Z:\\workspace\\REKO_Aufgabenblatt_3\\src\\Aufgabe_2\\server.conf.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         LoadBalancer loadBalancer = new LoadBalancer();
         loadBalancer.start();
     }
